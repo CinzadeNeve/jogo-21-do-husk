@@ -29,4 +29,4 @@ Na aplicação, o jogador enfrenta o personagem Husk em uma disputa estratégica
 ## 🔗 Demo
 
 Acesse o projeto online:  
-👉 https://21-do-husk.netlify.app/
+https://21-do-husk.netlify.app/
