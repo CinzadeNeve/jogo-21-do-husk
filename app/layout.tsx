@@ -58,6 +58,11 @@ export const metadata: Metadata = {
     description: 'Será que você consegue chegar a 21 pontos sem estourar e vencer o Husk? Jogue e descubra!',
     images: ['/image/background/bg-home.png'],
   },
+
+  verification: {
+    google: 'FccoiSL6L5RJfeWozYPENP4nGh0KLM9w5yNrNBllEto',
+  },
+
 };
 
 export default function RootLayout({
