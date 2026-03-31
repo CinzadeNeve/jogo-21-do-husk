@@ -36,8 +36,7 @@ const InicioGame = () => {
 
 
             {/** Redes Sociais */}
-            <div className="absolute z-[2] bottom-[2rem] left-0 w-full flex items-center justify-center gap-[1rem] z-[1]">
-               
+            <div className="absolute z-[2] bottom-[2rem] left-0 w-full flex items-center justify-center gap-[1rem] max-md:gap-[.5rem] z-[1]">
                 <LinkRedeSociais href="https://www.instagram.com/craudiow/" className="bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600" >
                     <FaInstagram className="h-[32px] max-md:h-[16px] w-[32px] max-md:w-[16px] text-white" />
                 </LinkRedeSociais>
