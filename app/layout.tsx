@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Yusei_Magic } from "next/font/google";
+import imgBackground from "@/public/image/background/bg-home.png"
 import "./globals.css";
 
 const yuseiMagic = Yusei_Magic({
@@ -8,8 +9,32 @@ const yuseiMagic = Yusei_Magic({
   variable: "--font-yusei",
 });
 export const metadata: Metadata = {
-  title: "21 do Husk",
+  title: "Minigame | 21 do Husk",
   description: "Será que você consegue chegar a 21 pontos sem estourar e vencer o Husk? Jogue e descubra!",
+
+
+  openGraph: {
+    title: 'Minigame | 21 do Husk',
+    description: 'Será que você consegue chegar a 21 pontos sem estourar e vencer o Husk? Jogue e descubra!',
+    url: 'https://21-do-husk.netlify.app/',
+    siteName: 'Minigame | 21 do Husk',
+    images: [
+      {
+        url: imgBackground.src,
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: 'pt_BR',
+    type: 'website',
+  },
+
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Minigame | 21 do Husk',
+    description: 'Será que você consegue chegar a 21 pontos sem estourar e vencer o Husk? Jogue e descubra!',
+    images: [imgBackground.src],
+  },
 };
 
 export default function RootLayout({
