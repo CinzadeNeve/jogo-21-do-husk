@@ -23,3 +23,10 @@
 Este projeto consiste no desenvolvimento de um mini jogo de 21 (Blackjack), inspirado no universo de Hazbin Hotel. 
 
 Na aplicação, o jogador enfrenta o personagem Husk em uma disputa estratégica, onde o objetivo é alcançar a melhor pontuação possível sem ultrapassar o limite de 21. Vence quem tiver a mão mais próxima de 21 sem estourar.
+
+---
+
+## 🔗 Demo
+
+Acesse o projeto online:  
+👉 https://21-do-husk.netlify.app/
