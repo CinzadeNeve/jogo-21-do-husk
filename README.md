@@ -16,7 +16,7 @@
 ![GitHub](https://img.shields.io/badge/Tools-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 ![Netlify](https://img.shields.io/badge/Tools-Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)
 
---
+---
 
 ## 📖 Sobre o projeto
 
