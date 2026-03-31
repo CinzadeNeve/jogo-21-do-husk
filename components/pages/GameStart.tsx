@@ -2,10 +2,13 @@ import imgHuskRender from '@/public/image/render/Husk_Render_1.webp'
 import imgHuskVence from '@/public/image/background/husk-win.jpg'
 import imgHuskDerrota from '@/public/image/background/husk-loser.png'
 import { baralho, Cartas } from '@/class/cartas';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useGameStore } from "@/store/useGame";
 
 
 const GameStart = () => {
+    const { setStatus } = useGameStore();
+
     const [maoInicial, setMaoInicial] = useState<(Cartas | undefined)[]>([]);
     const [maoHuskInicial, setMaoHuskInicial] = useState<(Cartas | undefined)[]>([]);
     const [listaPontos, setListaPontos] = useState<number[]>([]);
@@ -138,13 +141,11 @@ const GameStart = () => {
         ];
 
         const novosPontos: number[] = [];
-        let temAs = false;
+        let qtrAs = 0;
 
         auxMaoInicial.forEach((carta) => {
             if (carta?.valor === 'A') {
-                setIsAs(true)
-                setButtonMandaMais(true)
-                setButtonParar(true)
+                qtrAs++;
             } else if (carta?.valor && ['J', 'Q', 'K'].includes(carta.valor)) {
                 novosPontos.push(10);
             } else if (carta) {
@@ -152,11 +153,13 @@ const GameStart = () => {
             }
         });
 
-        /*if (temAs) {
-            setIsAs(true)
-            setButtonMandaMais(true)
-            setButtonParar(true)
-        }*/
+        if (qtrAs == 2) {
+            setListaPontos(prev => [...prev, 11, 1]);
+        } else if (qtrAs == 1) {
+            setIsAs(true);
+            setButtonMandaMais(false)
+            setButtonParar(false)
+        }
         setListaPontos(novosPontos);
 
         setMaoInicial([
@@ -222,17 +225,25 @@ const GameStart = () => {
             baralho.puxarCarta(),
             baralho.puxarCarta()
         ];
+
+        let qtrAs = 0;
         auxMaoInicial.forEach(carta => {
             if (carta?.valor === 'A') {
-                setIsAs(true);
-                setButtonMandaMais(false)
-                setButtonParar(false)
+                qtrAs++;
             } else if (carta?.valor === 'J' || carta?.valor === 'Q' || carta?.valor === 'K') {
                 setListaPontos(prev => [...prev, 10]);
             } else if (carta) {
                 setListaPontos(prev => [...prev, parseInt(carta.valor)]);
             }
         });
+
+        if (qtrAs == 2) {
+            setListaPontos(prev => [...prev, 11, 1]);
+        } else if (qtrAs == 1) {
+            setIsAs(true);
+            setButtonMandaMais(false)
+            setButtonParar(false)
+        }
         setMaoInicial([
             auxMaoInicial[0],
             auxMaoInicial[1]
@@ -287,18 +298,18 @@ const GameStart = () => {
 
 
                     {/** Husk Venceu */}
-                    <div className={`${isDerrota ? 'visibled' : 'invisible pointer-events-none'} flex flex-col w-full h-full absolute inset-0 bg-primary-red justify-end items-center`}>
+                    <div className={`${isDerrota ? 'visibled' : 'invisible pointer-events-none'} flex flex-col w-full h-full absolute inset-0 bg-primary-black justify-end items-center`}>
 
-                        <div className={`${isDerrota ? 'translate-y-0' : 'translate-y-500'} transition-transform duration-600 linear relative z-[2] bottom-[2rem] flex flex-col items-center justify-center`}>
+                        <div className={`${isDerrota ? 'translate-y-0' : 'translate-y-500'} transition-transform duration-600 linear relative z-[2] bottom-[1rem] flex flex-col items-center justify-center`}>
 
                             <div className='flex flex-col bg-white w-full items-center text-primary-red p-[2px]'>
-                                <p>
-                                    <span className='font-extrabold uppercase'>Você perdeu!</span>
+                                <p className='w-full flex flex-col items-center'>
+                                    <span className='font-extrabold uppercase p-[.2rem_.5rem] bg-primary-red text-white rounded-[10px] min-w-full flex justify-center'>Você perdeu!</span>
                                 </p>
                                 <p>
                                     Seus pontos: {pontos}
                                 </p>
-                                <div className='flex items-center justify-center gap-[4px]'>
+                                <div className='flex items-center justify-center gap-[4px] w-full overflow-x-auto px-[.2rem]'>
                                     {maoInicial.map((carta, index) => (
                                         <img key={index} src={carta?.img || ''} alt={`Carta ${index + 1}`} className='w-[40px] h-auto hover:scale-[1.4] focus-visible:scale-[1.4] transition-transform duration-150 linear' />
                                     ))}
@@ -306,7 +317,7 @@ const GameStart = () => {
                                 <p className='mt-[1rem]'>
                                     Pontos do Husk: {pontosHusk}
                                 </p>
-                                <div className='flex items-center justify-center gap-[4px]'>
+                                <div className='flex items-center justify-center gap-[4px] w-full overflow-x-auto px-[.2rem]'>
                                     {maoHuskInicial.map((carta, index) => (
                                         <img key={index} src={carta?.img || ''} alt={`Carta ${index + 1}`} className='w-[40px] h-auto hover:scale-[1.4] focus-visible:scale-[1.4] transition-transform duration-150 linear' />
                                     ))}
@@ -315,26 +326,29 @@ const GameStart = () => {
 
                             <button onClick={() => {
                                 resetGame();
-                            }} className=' hover:scale-[1.1] focus-visible:scale-[1.1] focus-visible:outline-none transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
+                            }} className='text-[12px] hover:scale-[1.1] focus-visible:scale-[1.1] focus-visible:outline-none transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
                                 Jogar novamente
                             </button>
+                            <button onClick={() => setStatus("INICIO")} className='text-[12px] hover:scale-[1.1] focus-visible:scale-[1.1] focus-visible:outline-none transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
+                                Sair
+                            </button>
                         </div>
-                        <img className='absolute inset-0 w-full h-full object-cover object-center z-[0]' src={imgHuskVence.src} alt="" />
+                        <img className='absolute inset-0 w-full h-full object-cover object-center z-[0] opacity-40' src={imgHuskVence.src} alt="" />
                     </div>
 
                     {/** Husk Perdeu */}
-                    <div className={`${isVitoria ? 'visibled' : 'invisible pointer-events-none'} flex flex-col w-full h-full absolute inset-0 bg-primary-red justify-end items-center`}>
+                    <div className={`${isVitoria ? 'visibled' : 'invisible pointer-events-none'} flex flex-col w-full h-full absolute inset-0 bg-primary-black justify-end items-center`}>
 
-                        <div className={`${isVitoria ? 'translate-y-0' : 'translate-y-500'} transition-transform duration-600 linear relative z-[2] bottom-[2rem] flex flex-col items-center justify-center`}>
+                        <div className={`${isVitoria ? 'translate-y-0' : 'translate-y-500'} transition-transform duration-600 linear relative z-[2] bottom-[1rem] flex flex-col items-center justify-center`}>
 
                             <div className='flex flex-col bg-white w-full items-center text-primary-red p-[2px]'>
-                                <p>
-                                    <span className='font-extrabold uppercase'>Você venceu!</span>
+                                <p className='w-full flex flex-col items-center'>
+                                    <span className='font-extrabold uppercase p-[.2rem_.5rem] bg-primary-red text-white rounded-[10px] min-w-full flex justify-center'>Você venceu!</span>
                                 </p>
                                 <p>
                                     Seus pontos: {pontos}
                                 </p>
-                                <div className='flex items-center justify-center gap-[4px]'>
+                                <div className='flex items-center justify-center gap-[4px] w-full overflow-x-auto px-[.2rem]'>
                                     {maoInicial.map((carta, index) => (
                                         <img key={index} src={carta?.img || ''} alt={`Carta ${index + 1}`} className='w-[40px] h-auto hover:scale-[1.4] focus-visible:scale-[1.4] transition-transform duration-150 linear' />
                                     ))}
@@ -342,7 +356,7 @@ const GameStart = () => {
                                 <p className='mt-[1rem]'>
                                     Pontos do Husk: {pontosHusk}
                                 </p>
-                                <div className='flex items-center justify-center gap-[4px]'>
+                                <div className='flex items-center justify-center gap-[4px] w-full overflow-x-auto px-[.2rem]'>
                                     {maoHuskInicial.map((carta, index) => (
                                         <img key={index} src={carta?.img || ''} alt={`Carta ${index + 1}`} className='w-[40px] h-auto hover:scale-[1.4] focus-visible:scale-[1.4] transition-transform duration-150 linear' />
                                     ))}
@@ -351,11 +365,14 @@ const GameStart = () => {
 
                             <button onClick={() => {
                                 resetGame();
-                            }} className=' hover:scale-[1.1] focus-visible:scale-[1.1] focus-visible:outline-none transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
+                            }} className='text-[12px] hover:scale-[1.1] focus-visible:scale-[1.1] focus-visible:outline-none transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
                                 Jogar novamente
                             </button>
+                            <button onClick={() => setStatus("INICIO")} className='text-[12px] hover:scale-[1.1] focus-visible:scale-[1.1] focus-visible:outline-none transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
+                                Sair
+                            </button>
                         </div>
-                        <img className='absolute inset-0 w-full h-full object-cover object-center z-[0]' src={imgHuskDerrota.src} alt="" />
+                        <img className='absolute inset-0 w-full h-full object-cover object-center z-[0] opacity-40' src={imgHuskDerrota.src} alt="" />
                     </div>
 
                     {/** Defina o valor do As */}
@@ -388,7 +405,7 @@ const GameStart = () => {
 
                 </div>
 
-                <div className='bg-primary-red rounded-[.25rem] p-[.5rem] h-[120px] w-full flex flex-col gap-[.3rem] items-end max-sm:items-center justify-end max-sm:justify-center'>
+                <div className='bg-primary-red rounded-[.25rem] p-[.5rem] h-auto w-full flex flex-col gap-[.3rem] items-end max-sm:items-center justify-end max-sm:justify-center'>
                     <button disabled={buttonParar} onClick={() => {
                         setButtonMandaMais(true);
                         setButtonParar(true);
@@ -413,6 +430,10 @@ const GameStart = () => {
                         exibePontos();
                     }} className='disabled:opacity-40 max-sm:text-[12px] cursor-pointer w-[260px] max-sm:w-[200px] p-[.5rem_2.5rem] bg-primary-black text-primary-red hover:text-white focus-visible:text-white focus-visible:outline-none rounded-[.25rem] uppercase transition-colors duration-150 linear'>
                         Manda mais uma
+                    </button>
+
+                    <button onClick={() => setStatus("DOACAO")} className='disabled:opacity-40 max-sm:text-[12px] cursor-pointer w-[260px] max-sm:w-[200px] p-[.5rem_2.5rem] bg-primary-black text-primary-red hover:text-white focus-visible:text-white focus-visible:outline-none rounded-[.25rem] uppercase transition-colors duration-150 linear'>
+                        Fazer Doação
                     </button>
                 </div>
             </main>
