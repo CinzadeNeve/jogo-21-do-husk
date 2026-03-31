@@ -8,6 +8,7 @@
 
 ![TailwindCSS](https://img.shields.io/badge/Style-TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![CSS3](https://img.shields.io/badge/Style-CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![React Icons](https://img.shields.io/badge/Style-React%20Icons-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 
 
 ![Zustand](https://img.shields.io/badge/Tools-Zustand-443E38?style=for-the-badge&logo=react&logoColor=white)
