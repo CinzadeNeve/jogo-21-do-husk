@@ -15,3 +15,9 @@
 ![Git](https://img.shields.io/badge/Tools-Git-F05032?style=for-the-badge&logo=git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/Tools-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 ![Netlify](https://img.shields.io/badge/Tools-Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)
+
+## 📖 Sobre o projeto
+
+Este projeto consiste no desenvolvimento de um mini jogo de 21 (Blackjack), inspirado no universo de Hazbin Hotel. 
+
+Na aplicação, o jogador enfrenta o personagem Husk em uma disputa estratégica, onde o objetivo é alcançar a melhor pontuação possível sem ultrapassar o limite de 21. Vence quem tiver a mão mais próxima de 21 sem estourar.
