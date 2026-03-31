@@ -13,11 +13,12 @@ const GameStart = () => {
     const [pontos, setPontos] = useState(0);
     const [pontosHusk, setPontosHusk] = useState(0);
     const [buttonMandaMais, setButtonMandaMais] = useState(false);
-    const [buttonParar, setButtonParar] = useState(false);  
+    const [buttonParar, setButtonParar] = useState(false);
     const [isDerrota, setIsDerrota] = useState(false);
     const [isVitoria, setIsVitoria] = useState(false);
     const [turnoHusk, setTurnoHusk] = useState(false);
     const [isAs, setIsAs] = useState(false);
+
 
     function determinarVencedor() {
         if (!turnoHusk) return;
@@ -39,10 +40,23 @@ const GameStart = () => {
         }
     }
 
-    function decideAsHusk(){
-        if(pontosHusk + 11 > 21){
+    function decideAsHusk() {
+        if (pontosHusk + 11 == 21) {
+            setListaPontosHusk(prev => [...prev, 11]);
+        }
+        else if (pontosHusk + 1 == 21) {
             setListaPontosHusk(prev => [...prev, 1]);
-        } else {
+        }
+        else if (pontosHusk + 11 < 21) {
+            setListaPontosHusk(prev => [...prev, 11]);
+        }
+        else if (pontosHusk + 11 > 21) {
+            setListaPontosHusk(prev => [...prev, 1]);
+        }
+        else if (pontosHusk + 1 < 21) {
+            setListaPontosHusk(prev => [...prev, 1]);
+        }
+        else {
             setListaPontosHusk(prev => [...prev, 11]);
         }
     }
@@ -72,10 +86,10 @@ const GameStart = () => {
             } else if (novaCarta) {
                 setListaPontosHusk(prev => [...prev, parseInt(novaCarta.valor)]);
             }
-            setMaoHuskInicial(prev => [...prev, novaCarta]); 
+            setMaoHuskInicial(prev => [...prev, novaCarta]);
         }
 
-        if(temAs) {
+        if (temAs) {
             decideAsHusk();
         }
     };
@@ -111,6 +125,7 @@ const GameStart = () => {
         listaPontosHusk.forEach(ponto => {
             totalPontos += ponto;
         });
+
         setPontosHusk(totalPontos);
     }
 
@@ -127,7 +142,9 @@ const GameStart = () => {
 
         auxMaoInicial.forEach((carta) => {
             if (carta?.valor === 'A') {
-                temAs = true;
+                setIsAs(true)
+                setButtonMandaMais(true)
+                setButtonParar(true)
             } else if (carta?.valor && ['J', 'Q', 'K'].includes(carta.valor)) {
                 novosPontos.push(10);
             } else if (carta) {
@@ -135,11 +152,11 @@ const GameStart = () => {
             }
         });
 
-        if (temAs){
+        /*if (temAs) {
             setIsAs(true)
             setButtonMandaMais(true)
             setButtonParar(true)
-        }
+        }*/
         setListaPontos(novosPontos);
 
         setMaoInicial([
@@ -176,18 +193,78 @@ const GameStart = () => {
         //calcularPontos(maoHuskInicial, true);
         exibePontos();
     }, [maoHuskInicial])
-    
-    useEffect(() => { if(pontos > 21) setIsDerrota(true) },[pontos])
+
+    useEffect(() => {
+        if (pontos > 21) {
+            setIsDerrota(true)
+            setButtonMandaMais(true)
+            setButtonParar(true)
+        }
+    }, [pontos])
 
     useEffect(() => { exibePontos() }, [listaPontos, listaPontosHusk])
+
+    function resetGame() {
+        setPontos(0);
+        setListaPontos([]);
+        setPontosHusk(0);
+        setListaPontosHusk([]);
+
+
+        setButtonMandaMais(false);
+        setButtonParar(false);
+        setIsVitoria(false);
+        setTurnoHusk(false);
+        setIsDerrota(false);
+        baralho.resetarBaralho();
+        baralho.embaralhar();
+        const auxMaoInicial = [
+            baralho.puxarCarta(),
+            baralho.puxarCarta()
+        ];
+        auxMaoInicial.forEach(carta => {
+            if (carta?.valor === 'A') {
+                setIsAs(true);
+                setButtonMandaMais(false)
+                setButtonParar(false)
+            } else if (carta?.valor === 'J' || carta?.valor === 'Q' || carta?.valor === 'K') {
+                setListaPontos(prev => [...prev, 10]);
+            } else if (carta) {
+                setListaPontos(prev => [...prev, parseInt(carta.valor)]);
+            }
+        });
+        setMaoInicial([
+            auxMaoInicial[0],
+            auxMaoInicial[1]
+        ]);
+
+
+        const auxMaoHuskInicial = [baralho.puxarCarta(), baralho.puxarCarta()];
+        auxMaoHuskInicial.forEach(carta => {
+            if (carta?.valor === 'A') {
+                decideAsHusk()
+            } else if (carta?.valor === 'J' || carta?.valor === 'Q' || carta?.valor === 'K') {
+                setListaPontosHusk(prev => [...prev, 10]);
+            } else if (carta) {
+                setListaPontosHusk(prev => [...prev, parseInt(carta.valor)]);
+            }
+        });
+
+        setMaoHuskInicial([auxMaoHuskInicial[0], auxMaoHuskInicial[1]]);
+
+
+
+        exibePontos();
+    }
+
     return (
         <>
             <main className="flex flex-col max-w-[600px] min-h-[calc(100vh-4rem)] max-sm:min-h-[calc(100dvh-2rem)] w-full relative z-[1] bg-primary-black p-[1rem] rounded-[.5rem]">
-                <div className="h-[160px] w-full overflow-hidden border-4 border-primary-red">
+                <div className="h-[160px] max-sm:h-[100px] w-full overflow-hidden border-4 border-primary-red">
                     <img className='w-full h-full object-center object-cover' src={imgHuskRender.src} alt="" />
                 </div>
 
-                <div className='flex-1 relative'>
+                <div className='flex-1 relative overflow-hidden'>
                     <span className='absolute text-primary-red top-[10px] left-[10px]'>Seus pontos: <span className='!font-extrabold'>{pontos}</span></span>
 
                     <div className='absolute text-primary-red right-[10px] top-[10px] flex flex-col'>
@@ -200,8 +277,8 @@ const GameStart = () => {
                     </div>
 
                     <div className='flex flex-col items-center py-[1rem] absolute left-0 bottom-0 w-full'>
-                        <h2 className='text-base text-white font-bold'>Mão Inicial</h2>
-                        <div className='flex gap-[.5rem] mt-[.5rem]'>
+                        <h2 className='text-base text-white font-bold'>Sua Mão</h2>
+                        <div className='flex gap-[.5rem] mt-[.5rem] w-full justify-center overflow-x-auto'>
                             {maoInicial.map((carta, index) => (
                                 <img key={index} src={carta?.img || ''} alt={`Carta ${index + 1}`} className='w-[60px] h-auto' />
                             ))}
@@ -210,59 +287,35 @@ const GameStart = () => {
 
 
                     {/** Husk Venceu */}
-                    <div className={`${isDerrota ? 'flex' : 'hidden'} flex-col w-full h-full absolute inset-0 bg-primary-red justify-end items-center`}>
+                    <div className={`${isDerrota ? 'visibled' : 'invisible pointer-events-none'} flex flex-col w-full h-full absolute inset-0 bg-primary-red justify-end items-center`}>
 
-                        <div className='relative z-[2] bottom-[2rem] flex flex-col items-center justify-center'>
+                        <div className={`${isDerrota ? 'translate-y-0' : 'translate-y-500'} transition-transform duration-600 linear relative z-[2] bottom-[2rem] flex flex-col items-center justify-center`}>
 
-                            <p className=' bg-white w-full flex flex-col items-center text-primary-red p-[2px] text-center'><span className='font-extrabold uppercase'>Você perdeu!</span><br />Seus pontos: {pontos}<br />Pontos do Husk: {pontosHusk}</p>
+                            <div className='flex flex-col bg-white w-full items-center text-primary-red p-[2px]'>
+                                <p>
+                                    <span className='font-extrabold uppercase'>Você perdeu!</span>
+                                </p>
+                                <p>
+                                    Seus pontos: {pontos}
+                                </p>
+                                <div className='flex items-center justify-center gap-[4px]'>
+                                    {maoInicial.map((carta, index) => (
+                                        <img key={index} src={carta?.img || ''} alt={`Carta ${index + 1}`} className='w-[40px] h-auto hover:scale-[1.4] focus-visible:scale-[1.4] transition-transform duration-150 linear' />
+                                    ))}
+                                </div>
+                                <p className='mt-[1rem]'>
+                                    Pontos do Husk: {pontosHusk}
+                                </p>
+                                <div className='flex items-center justify-center gap-[4px]'>
+                                    {maoHuskInicial.map((carta, index) => (
+                                        <img key={index} src={carta?.img || ''} alt={`Carta ${index + 1}`} className='w-[40px] h-auto hover:scale-[1.4] focus-visible:scale-[1.4] transition-transform duration-150 linear' />
+                                    ))}
+                                </div>
+                            </div>
+
                             <button onClick={() => {
-                                setPontos(0);
-                                setListaPontos([]);
-                                setPontosHusk(0);
-                                setListaPontosHusk([]);
-
-
-                                setButtonMandaMais(false);
-                                setIsVitoria(false);
-                                setTurnoHusk(false);
-                                setIsDerrota(false);
-                                baralho.resetarBaralho();
-                                const auxMaoInicial = [
-                                    baralho.puxarCarta(),
-                                    baralho.puxarCarta()
-                                ];
-                                auxMaoInicial.forEach(carta => {
-                                    if (carta?.valor === 'A') {
-                                        setIsAs(true);
-                                    } else if (carta?.valor === 'J' || carta?.valor === 'Q' || carta?.valor === 'K') {
-                                        setListaPontos(prev => [...prev, 10]);
-                                    } else if (carta) {
-                                        setListaPontos(prev => [...prev, parseInt(carta.valor)]);
-                                    }
-                                });
-                                setMaoInicial([
-                                    auxMaoInicial[0],
-                                    auxMaoInicial[1]
-                                ]);
-
-
-                                const auxMaoHuskInicial = [baralho.puxarCarta(), baralho.puxarCarta()];
-                                auxMaoHuskInicial.forEach(carta => {
-                                    if (carta?.valor === 'A') {
-                                        decideAsHusk()
-                                    } else if (carta?.valor === 'J' || carta?.valor === 'Q' || carta?.valor === 'K') {
-                                        setListaPontosHusk(prev => [...prev, 10]);
-                                    } else if (carta) {
-                                        setListaPontosHusk(prev => [...prev, parseInt(carta.valor)]);
-                                    }
-                                });
-
-                                setMaoHuskInicial([auxMaoHuskInicial[0], auxMaoHuskInicial[1]]);
-
-
-
-                                exibePontos();
-                            }} className=' hover:scale-[1.1] transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
+                                resetGame();
+                            }} className=' hover:scale-[1.1] focus-visible:scale-[1.1] focus-visible:outline-none transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
                                 Jogar novamente
                             </button>
                         </div>
@@ -270,60 +323,35 @@ const GameStart = () => {
                     </div>
 
                     {/** Husk Perdeu */}
-                    <div className={`${isVitoria ? 'flex' : 'hidden'} flex-col w-full h-full absolute inset-0 bg-primary-red justify-end items-center`}>
+                    <div className={`${isVitoria ? 'visibled' : 'invisible pointer-events-none'} flex flex-col w-full h-full absolute inset-0 bg-primary-red justify-end items-center`}>
 
-                        <div className='relative z-[2] bottom-[2rem] flex flex-col items-center justify-center'>
+                        <div className={`${isVitoria ? 'translate-y-0' : 'translate-y-500'} transition-transform duration-600 linear relative z-[2] bottom-[2rem] flex flex-col items-center justify-center`}>
 
-                            <p className=' bg-white w-full flex flex-col items-center text-primary-red p-[2px] text-center'><span className='font-extrabold uppercase'>Você Venceu!</span><br />Seus pontos: {pontos}<br />Pontos do Husk: {pontosHusk}</p>
+                            <div className='flex flex-col bg-white w-full items-center text-primary-red p-[2px]'>
+                                <p>
+                                    <span className='font-extrabold uppercase'>Você venceu!</span>
+                                </p>
+                                <p>
+                                    Seus pontos: {pontos}
+                                </p>
+                                <div className='flex items-center justify-center gap-[4px]'>
+                                    {maoInicial.map((carta, index) => (
+                                        <img key={index} src={carta?.img || ''} alt={`Carta ${index + 1}`} className='w-[40px] h-auto hover:scale-[1.4] focus-visible:scale-[1.4] transition-transform duration-150 linear' />
+                                    ))}
+                                </div>
+                                <p className='mt-[1rem]'>
+                                    Pontos do Husk: {pontosHusk}
+                                </p>
+                                <div className='flex items-center justify-center gap-[4px]'>
+                                    {maoHuskInicial.map((carta, index) => (
+                                        <img key={index} src={carta?.img || ''} alt={`Carta ${index + 1}`} className='w-[40px] h-auto hover:scale-[1.4] focus-visible:scale-[1.4] transition-transform duration-150 linear' />
+                                    ))}
+                                </div>
+                            </div>
+
                             <button onClick={() => {
-                                setPontos(0);
-                                setPontosHusk(0);
-                                setListaPontos([]);
-                                setListaPontosHusk([]);
-                                setButtonMandaMais(false);
-                                setIsDerrota(false);
-                                setIsVitoria(false);
-                                setTurnoHusk(false);
-                                baralho.resetarBaralho();
-
-
-                                const auxMaoInicial = [
-                                    baralho.puxarCarta(),
-                                    baralho.puxarCarta()
-                                ];
-                                auxMaoInicial.forEach(carta => {
-                                    if (carta?.valor === 'A') {
-                                        setIsAs(true);
-                                    } else if (carta?.valor === 'J' || carta?.valor === 'Q' || carta?.valor === 'K') {
-                                        setListaPontos(prev => [...prev, 10]);
-                                    } else if (carta) {
-                                        setListaPontos(prev => [...prev, parseInt(carta.valor)]);
-                                    }
-                                });
-
-
-                                setMaoInicial([
-                                    auxMaoInicial[0],
-                                    auxMaoInicial[1]
-                                ]);
-
-
-                                const auxMaoHuskInicial = [baralho.puxarCarta(), baralho.puxarCarta()];
-                                auxMaoHuskInicial.forEach(carta => {
-                                    if (carta?.valor === 'A') {
-                                        decideAsHusk()
-                                    } else if (carta?.valor === 'J' || carta?.valor === 'Q' || carta?.valor === 'K') {
-                                        setListaPontosHusk(prev => [...prev, 10]);
-                                    } else if (carta) {
-                                        setListaPontosHusk(prev => [...prev, parseInt(carta.valor)]);
-                                    }
-                                });
-
-                                setMaoHuskInicial([auxMaoHuskInicial[0], auxMaoHuskInicial[1]]);
-
-
-                                exibePontos();
-                            }} className=' hover:scale-[1.1] transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
+                                resetGame();
+                            }} className=' hover:scale-[1.1] focus-visible:scale-[1.1] focus-visible:outline-none transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
                                 Jogar novamente
                             </button>
                         </div>
@@ -337,11 +365,11 @@ const GameStart = () => {
                             <button onClick={() => {
                                 setListaPontos([...listaPontos, 1]);
                                 setIsAs(false);
-                                 setButtonMandaMais(false)
-                                 setButtonParar(false);
+                                setButtonMandaMais(false)
+                                setButtonParar(false);
 
                                 exibePontos();
-                            }} className=' hover:scale-[1.1] transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
+                            }} className=' hover:scale-[1.1] focus-visible:scale-[1.1] focus-visible:outline-none transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
                                 Ás vale 1 ponto
                             </button>
                             <button onClick={() => {
@@ -351,7 +379,7 @@ const GameStart = () => {
                                 setButtonParar(false);
 
                                 exibePontos();
-                            }} className=' hover:scale-[1.1] transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
+                            }} className=' hover:scale-[1.1] focus-visible:scale-[1.1] focus-visible:outline-none transition-transform duration-100 linear border-2 border-white disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-white  uppercase'>
                                 Ás vale 11 pontos
                             </button>
                         </div>
@@ -360,12 +388,13 @@ const GameStart = () => {
 
                 </div>
 
-                <div className='bg-primary-red rounded-[.25rem] p-[.5rem] h-[120px] w-full flex flex-col gap-[.3rem] items-end justify-end'>
+                <div className='bg-primary-red rounded-[.25rem] p-[.5rem] h-[120px] w-full flex flex-col gap-[.3rem] items-end max-sm:items-center justify-end max-sm:justify-center'>
                     <button disabled={buttonParar} onClick={() => {
                         setButtonMandaMais(true);
+                        setButtonParar(true);
                         iniciarTurnoHusk();
                         setTurnoHusk(true);
-                    }} className='disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-primary-red rounded-[.25rem] uppercase'>
+                    }} className='disabled:opacity-40 max-sm:text-[12px] cursor-pointer w-[260px] max-sm:w-[200px] p-[.5rem_2.5rem] bg-primary-black text-primary-red hover:text-white focus-visible:text-white focus-visible:outline-none rounded-[.25rem] uppercase transition-colors duration-150 linear'>
                         Parar
                     </button>
 
@@ -379,10 +408,10 @@ const GameStart = () => {
                             setButtonParar(true)
                         }
 
-
                         setMaoInicial([...maoInicial, novaCarta])
+
                         exibePontos();
-                    }} className='disabled:opacity-40 cursor-pointer w-[260px] p-[.5rem_2.5rem] bg-primary-black text-primary-red rounded-[.25rem] uppercase'>
+                    }} className='disabled:opacity-40 max-sm:text-[12px] cursor-pointer w-[260px] max-sm:w-[200px] p-[.5rem_2.5rem] bg-primary-black text-primary-red hover:text-white focus-visible:text-white focus-visible:outline-none rounded-[.25rem] uppercase transition-colors duration-150 linear'>
                         Manda mais uma
                     </button>
                 </div>

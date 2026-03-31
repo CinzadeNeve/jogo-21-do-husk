@@ -91,7 +91,7 @@ export class Baralho {
     }
 
     resetarBaralho() {
-        this.cartas = this.segurityCarta;
+        this.cartas = [...this.segurityCarta];
     }
 }
 
