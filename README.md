@@ -29,8 +29,8 @@ Na aplicação, o jogador enfrenta o personagem Husk em uma disputa estratégica
 
 ## 📸 Preview
 
-![Preview](https://i.imgur.com/zH3vbxb.png)
-![Preview](https://i.imgur.com/b8p3Wln.png)
+<img src="https://i.imgur.com/zH3vbxb.png" style="max-width: 300px; width: 100%;" />
+<img src="https://i.imgur.com/b8p3Wln.png" style="max-width: 300px; width: 100%;" />
 
 ---
 
