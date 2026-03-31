@@ -27,6 +27,11 @@ const InicioGame = () => {
                                 Sobre
                             </ButtonPrimary>
                         </li>
+                        <li>
+                            <ButtonPrimary onClick={() => setStatus("DOACAO")}  className="w-full text-center">
+                                Doação
+                            </ButtonPrimary>
+                        </li>
                     </ul>
                 </div>
             </main>
