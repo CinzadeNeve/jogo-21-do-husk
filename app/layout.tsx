@@ -9,9 +9,32 @@ const yuseiMagic = Yusei_Magic({
   variable: "--font-yusei",
 });
 export const metadata: Metadata = {
+  metadataBase: new URL('https://21-do-husk.netlify.app'),
+
   title: "Minigame | 21 do Husk",
   description: "Será que você consegue chegar a 21 pontos sem estourar e vencer o Husk? Jogue e descubra!",
 
+  keywords: ['blackjack', '21 jogo', 'minigame cartas', 'jogo 21 online', 'hazbin hotel'],
+
+  authors: [{ name: 'Cláudio Alves' }],
+  creator: 'Cláudio Alves',
+
+  category: 'games',
+
+  alternates: {
+    canonical: '/',
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 
   openGraph: {
     title: 'Minigame | 21 do Husk',
@@ -20,7 +43,7 @@ export const metadata: Metadata = {
     siteName: 'Minigame | 21 do Husk',
     images: [
       {
-        url: imgBackground.src,
+        url: '/image/background/bg-home.png',
         width: 1200,
         height: 630,
       },
@@ -33,7 +56,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Minigame | 21 do Husk',
     description: 'Será que você consegue chegar a 21 pontos sem estourar e vencer o Husk? Jogue e descubra!',
-    images: [imgBackground.src],
+    images: ['/image/background/bg-home.png'],
   },
 };
 
@@ -49,7 +72,7 @@ export default function RootLayout({
     >
       <body className="flex flex-col h-screen max-md:h-dvh w-full items-center justify-center relative px-[1rem]">
         {children}
-       </body>
+      </body>
     </html>
   );
 }
